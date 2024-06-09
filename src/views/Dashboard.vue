@@ -1,5 +1,5 @@
 <template>
-  <div style="margin: 20px">
+  <div style="margin: 15px">
     <el-row :gutter="20">
       <el-col :span="6" v-for="item in cards" :key="item.title">
         <el-card class="box-card">
@@ -13,46 +13,53 @@
         </el-card>
       </el-col>
     </el-row>
-    <div id="myTimer" style="margin-left: 15px; font-weight: 550"></div>
-    <!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
+    <div id="myTimer" style="margin-left: 8px; font-weight: 550"></div>
     <div id="main" style="margin-left: 5px"></div>
   </div>
 </template>
 
 <script>
 import * as echarts from "echarts";
-import { ElMessage } from "element-plus";
-import request from "../utils/request";
+import api from "@/api";
 
 export default {
   data() {
     return {
       cards: [
-        { title: "已借阅", data: 100, icon: "#iconlend-record-pro" },
+        { title: "用户数", data: 100, icon: "#iconpopulation" },
         { title: "总访问", data: 100, icon: "#iconvisit" },
-        { title: "图书数", data: 100, icon: "#iconbook-pro" },
-        { title: "用户数", data: 1000, icon: "#iconpopulation" },
+        { title: "生物数", data: 100, icon: "#iconlend-record-pro" },
+        { title: "国家数", data: 100, icon: "#iconbook-pro" },
+        { title: "港口数", data: 100, icon: "#iconvisit" },
+        { title: "港口发现生物数量", data: 100, icon: "#iconlend-record-pro" },
+        { title: "港口检测生物数量", data: 100, icon: "#iconbook-pro" },
+        { title: "国家发现有害生物数量", data: 100, icon: "#iconpopulation" }
       ],
       data: {},
     };
   },
-  created() {},
+  created() { },
   mounted() {
     this.circleTimer();
-
-    request.get("/dashboard").then((res) => {
-      if (res.code == 0) {
-        this.cards[0].data = res.data.lendRecordCount;
-        this.cards[1].data = res.data.visitCount;
-        this.cards[2].data = res.data.bookCount;
-        this.cards[3].data = res.data.userCount;
-      } else {
-        ElMessage.error(res.msg);
-      }
-
+    this.loadData()
+  },
+  methods: {
+    loadData() {
+      api.dashboard().then(res => {
+        this.cards[0].data = res.data.visitCount;
+        this.cards[1].data = res.data.userCount;
+        this.cards[2].data = res.data.biologyCount;
+        this.cards[3].data = res.data.countryCount;
+        this.cards[4].data = res.data.portCount;
+        this.cards[5].data = res.data.portFindCount;
+        this.cards[6].data = res.data.portCheckCount;
+        this.cards[7].data = res.data.countryFindCount;
+        this.initChart()
+      })
+    },
+    initChart() {
       // 基于准备好的dom，初始化echarts实例
-      var myChart = echarts.init(document.getElementById("main"));
-      console.log(this.cards[0].data);
+      const myChart = echarts.init(document.getElementById("main"));
       // 绘制图表
       myChart.setOption({
         title: {
@@ -75,6 +82,9 @@ export default {
           data: this.cards.map((item) => item.title),
           axisTick: {
             alignWithLabel: true,
+          },
+          axisLabel: {
+            rotate: -30 // 旋转角度，单位为度
           },
         },
         yAxis: {
@@ -102,6 +112,22 @@ export default {
                 value: this.cards[3].data,
                 itemStyle: { color: "#ee6666" },
               },
+              {
+                value: this.cards[4].data,
+                itemStyle: { color: "#5470c7" },
+              },
+              {
+                value: this.cards[5].data,
+                itemStyle: { color: "#91cc78" },
+              },
+              {
+                value: this.cards[6].data,
+                itemStyle: { color: "#fac859" },
+              },
+              {
+                value: this.cards[7].data,
+                itemStyle: { color: "#ee6667" },
+              },
             ],
           },
         ],
@@ -109,9 +135,7 @@ export default {
       window.addEventListener("resize", () => {
         myChart.resize();
       });
-    });
-  },
-  methods: {
+    },
     circleTimer() {
       this.getTimer();
       setInterval(() => {
@@ -119,9 +143,11 @@ export default {
       }, 1000);
     },
     getTimer() {
-      var d = new Date();
-      var t = d.toLocaleString();
-      document.getElementById("myTimer").innerHTML = t;
+      if (document.getElementById("myTimer")) {
+        var d = new Date();
+        var t = d.toLocaleString();
+        document.getElementById("myTimer").innerHTML = t;
+      }
     },
   },
 };
@@ -129,33 +155,32 @@ export default {
 
 <style scoped>
 .box-card {
-  width: 80%;
-  margin-bottom: 25px;
-  margin-left: 10px;
+  width: 100%;
+  margin-bottom: 15px;
+  padding: 0;
 }
 
 .clearfix {
   text-align: center;
-  font-size: 15px;
+  font-size: 16px;
 }
 
 .text {
   text-align: center;
   font-size: 24px;
   font-weight: 700;
-  vertical-align: super;
 }
 
 #main {
   width: 100%;
-  height: 450px;
   margin-top: 20px;
+  height: 360px;
 }
 
 .icon {
-  width: 50px;
-  height: 50px;
-  padding-top: 5px;
+  width: 40px;
+  height: 40px;
+  padding-top: 10px;
   padding-right: 10px;
 }
 </style>

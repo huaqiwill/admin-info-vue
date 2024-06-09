@@ -40,7 +40,7 @@ import { ElMessage } from "element-plus";
 
 export default {
   name: "Header",
-  props: ["user"],
+  props: [],
   data() {
     return {
       user: [],

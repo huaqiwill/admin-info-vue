@@ -4,14 +4,14 @@
     <el-form ref="form" :model="form" :rules="rules" class="login-page">
       <h2 class="title" style="margin-bottom: 20px">系统登陆</h2>
       <el-form-item prop="username">
-        <el-input v-model="form.username" clearable>
+        <el-input v-model="form.username" clearable placeholder="请输入用户名">
           <template #prefix>
             <el-icon class="el-input__icon"><User /></el-icon>
           </template>
         </el-input>
       </el-form-item>
       <el-form-item prop="password">
-        <el-input v-model="form.password" clearable show-password>
+        <el-input v-model="form.password" clearable show-password placeholder="请输入密码">
           <template #prefix>
             <el-icon class="el-input__icon"><Lock /></el-icon>
           </template>
@@ -28,7 +28,9 @@
         </div>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" style="width: 100%" @click="login">登 录</el-button>
+        <el-button type="primary" style="width: 100%" @click="login"
+          >登 录</el-button
+        >
       </el-form-item>
       <el-form-item
         ><el-button type="text" @click="$router.push('/register')"

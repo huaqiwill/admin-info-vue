@@ -14,11 +14,6 @@ const routes = [
                 component: () => import("@/views/User")
             },
             {
-                path: 'book',
-                name: 'book',
-                component: () => import("@/views/Book")
-            },
-            {
                 path: 'person',
                 name: 'Person',
                 component: () => import("@/views/Person")
@@ -29,24 +24,9 @@ const routes = [
                 component: () => import("@/views/Password")
             },
             {
-                path: 'lendrecord',
-                name: 'LendRecord',
-                component: () => import("@/views/LendRecord")
-            },
-            {
                 path: 'dashboard',
                 name: 'Dashboard',
                 component: () => import("@/views/Dashboard")
-            },
-            {
-                path: 'bookwithuser',
-                name: 'BookWithUser',
-                component: () => import("@/views/BookWithUser")
-            },
-            {
-                path: 'user2',
-                name: 'User2',
-                component: () => import("@/views/User2")
             },
             {
                 path: 'port',

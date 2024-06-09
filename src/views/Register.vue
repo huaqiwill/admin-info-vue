@@ -35,7 +35,7 @@
         </el-input>
       </el-form-item>
       <el-form-item prop="role">
-        <el-radio v-model="form.role" label="2">读者</el-radio>
+        <el-radio v-model="form.role" label="2">普通用户</el-radio>
         <el-radio v-model="form.role" label="1">管理员</el-radio>
       </el-form-item>
       <el-form-item prop="authorize" v-if="form.role == 1">

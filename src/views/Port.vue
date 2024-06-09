@@ -1,7 +1,7 @@
 <template>
   <div class="home" style="margin: 20px">
     <!-- 搜索 -->
-    <el-form inline="true" size="small">
+    <el-form :inline="true" size="small">
       <el-form-item label="港口名称">
         <el-input
           v-model="query.portName"
@@ -48,7 +48,6 @@
           @click="load"
           size="mini"
         >
-          <svg-icon iconClass="search" />
           查询
         </el-button>
       </el-form-item>
@@ -58,14 +57,8 @@
     </el-form>
     <!-- 操作 -->
     <div style="margin-bottom: 20px">
-      <el-button type="primary" @click="add" v-if="user.role == 1" size="mini">
-        添加港口
-      </el-button>
-      <el-popconfirm
-        title="确认删除?"
-        @confirm="deleteBatch"
-        v-if="user.role == 1"
-      >
+      <el-button type="primary" @click="add" size="mini"> 添加港口 </el-button>
+      <el-popconfirm title="确认删除?" @confirm="deleteBatch">
         <template #reference>
           <el-button type="danger" size="mini">批量删除</el-button>
         </template>
@@ -75,7 +68,7 @@
     <el-table
       :data="tableData"
       stripe
-      border="true"
+      :border="true"
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55" />
@@ -115,7 +108,7 @@
     </div>
     <!-- 添加和修改对话框 -->
     <el-dialog v-model="saveDialogVisible" :title="title" width="30%">
-      <el-form :model="form" label-width="120px">
+      <el-form :model="portForm" label-width="120px">
         <el-form-item label="港口编号">
           <el-input style="width: 80%" v-model="portForm.num"></el-input>
         </el-form-item>
@@ -144,7 +137,6 @@
 </template>
 
 <script >
-import request from "../utils/request";
 import { ElMessage } from "element-plus";
 import api from '@/api.js'
 
@@ -152,12 +144,11 @@ import api from '@/api.js'
 export default {
   name: "Port",
   created() {
-    let userStr = sessionStorage.getItem("user") || "{}";
-    this.user = JSON.parse(userStr);
     this.load();
   },
   data() {
     return {
+      // 查询参数
       query: {
         pageNum: 1,
         pageSize: 10,
@@ -165,23 +156,18 @@ export default {
         portName: "",
         province: ""
       },
+      // 表单
       portForm: {
         num: "",
         name: "",
         countryName: "",
         province: "",
       },
+      // 表格数据
       tableData: [],
       total: 0,
       title: "",
       saveDialogVisible: false,
-      user: {},
-      number: 0,
-      bookData: [],
-      isbnArray: [],
-      outDateBook: [],
-      numOfOutDataBook: 0,
-      dialogVisible3: true,
     };
   },
   methods: {
@@ -191,18 +177,14 @@ export default {
     },
     // 批量删除
     deleteBatch() {
-      if (!this.ids.length) {
+      if (this.ids === undefined || this.ids.length === 0) {
         ElMessage.warning("请选择数据！");
         return;
       }
-      request.post("/book/deleteBatch", this.ids).then((res) => {
-        if (res.code === "0") {
-          ElMessage.success("批量删除成功");
-          this.load();
-        } else {
-          ElMessage.error(res.msg);
-        }
-      });
+      api.portDeleteBatch(this.ids).then(res => {
+        ElMessage.success("批量删除成功");
+        this.load();
+      })
     },
     // 加载数据
     load() {
@@ -234,13 +216,13 @@ export default {
     // 修改数据对话框
     handleSave() {
       if (this.portForm.id) {
-        api.portUpdate(this.form).then(res => {
+        api.portUpdate(this.portForm).then(res => {
           ElMessage.success(res.msg);
           this.load();
-          this.dialogVisible2 = false;
+          this.saveDialogVisible = false;
         })
       } else {
-        api.portAdd().then(res => {
+        api.portAdd(this.portForm).then(res => {
           ElMessage.success(res.msg);
           this.load();
           this.saveDialogVisible = false;
@@ -252,17 +234,17 @@ export default {
       api.portInfo(id).then(res => {
         this.title = "编辑数据"
         this.portForm = res.data;
-        this.dialogVisible2 = true;
+        this.saveDialogVisible = true;
       })
     },
     // 
     handleSizeChange(pageSize) {
-      this.pageSize = pageSize;
+      this.query.pageSize = pageSize;
       this.load();
     },
     // 
     handleCurrentChange(pageNum) {
-      this.pageNum = pageNum;
+      this.query.pageNum = pageNum;
       this.load();
     }
   },
