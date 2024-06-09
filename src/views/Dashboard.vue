@@ -26,8 +26,8 @@ export default {
   data() {
     return {
       cards: [
-        { title: "用户数", data: 100, icon: "#iconpopulation" },
-        { title: "总访问", data: 100, icon: "#iconvisit" },
+        { title: "总访问", data: 100, icon: "#iconpopulation" },
+        { title: "用户数", data: 100, icon: "#iconvisit" },
         { title: "生物数", data: 100, icon: "#iconlend-record-pro" },
         { title: "国家数", data: 100, icon: "#iconbook-pro" },
         { title: "港口数", data: 100, icon: "#iconvisit" },
